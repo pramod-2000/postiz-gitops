@@ -1,11 +1,12 @@
-apiVersion: apps/v1
+iiapiVersion: apps/v1
 kind: Deployment
+
 metadata:
   name: postiz
   namespace: postiz
 
 spec:
-  replicas: 3
+  replicas: 1
 
   selector:
     matchLabels:
@@ -18,17 +19,61 @@ spec:
 
     spec:
       containers:
-      - name: nginx
-        image: nginx:latest
+      - name: postiz
+
+        image: ghcr.io/gitroomhq/postiz-app:latest
 
         ports:
-        - containerPort: 80
+        - containerPort: 5000
+
+        env:
+        - name: REDIS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: postiz-config
+              key: REDIS_HOST
+
+        - name: REDIS_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: postiz-config
+              key: REDIS_PORT
+
+        - name: DATABASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: postiz-config
+              key: DATABASE_HOST
+
+        - name: DATABASE_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: postiz-config
+              key: DATABASE_PORT
+
+        - name: DATABASE_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: postiz-config
+              key: DATABASE_NAME
+
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: postiz-secret
+              key: DATABASE_USER
+
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postiz-secret
+              key: DATABASE_PASSWORD
 
         resources:
           requests:
-            cpu: 100m
-            memory: 128Mi
+            cpu: 200m
+            memory: 512Mi
 
           limits:
-            cpu: 500m
-            memory: 512Mi
+            cpu: 1000m
+            memory: 2Gi
