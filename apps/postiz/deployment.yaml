@@ -22,6 +22,7 @@ spec:
       - name: postiz
 
         image: ghcr.io/gitroomhq/postiz-app:latest
+        imagePullPolicy: Always
 
         ports:
         - containerPort: 5000
@@ -68,6 +69,12 @@ spec:
             secretKeyRef:
               name: postiz-secret
               key: DATABASE_PASSWORD
+
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: postiz-secret
+              key: DATABASE_URL
 
         resources:
           requests:
